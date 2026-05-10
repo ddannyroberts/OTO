@@ -1,156 +1,105 @@
-## OTO Revenue Analytics Mini
+# OTO Revenue Analytics Mini 📊
 
-Revenue analytics MVP for OTO Kid Park (Phuket), built to demonstrate AI-assisted development, business-rule implementation, and integration readiness for real POS data pipelines.
+A high-performance, AI-driven Revenue Intelligence MVP designed for **OTO Kid Park (Phuket)**. This system bridges the gap between raw POS data (Pisell/Funtovia) and actionable business insights.
 
-### Why this project exists
+---
 
-This prototype is designed to show practical fit for an **AI-Assisted Developer & Prompt Engineer** role:
+## 🌟 Key Features
 
-- Rapid feature delivery using AI-assisted workflows.
-- Ability to translate business questions into backend logic.
-- Clean API structure ready for Pisell/Funtovia POS ingestion.
-- Communication-ready output in both Thai and English.
+### 1. Advanced Analytics Dashboard
+- **Interactive Visuals:** Responsive line charts comparing Revenue vs. Discounts.
+- **Smart KPIs:** Real-time calculation of Total Revenue, Guest Counts, and **Avg. Spend per Guest**.
+- **Automated Insights:** Logic-driven management indicators for discount risks and data anomalies.
 
-### Tech stack
+### 2. Operational Efficiency
+- **Quick Data Entry:** Streamlined form for daily revenue logging (backed by SQLite).
+- **Secure Access:** Built-in authentication system with session management.
+- **CSV Export:** One-click data portability for executive reporting.
+- **Date Filtering:** Drill down into specific performance periods.
 
-- Frontend: `React` + `Vite`
-- Backend: `Node.js` + `Express`
-- Data layer: `Prisma` + `SQLite`
-- Performance: query-aware in-memory cache (`60s` TTL)
+### 3. Business Intelligence Logic
+- **Dynamic Discount Mapping:** Categorizes discount levels (Low, Medium, High) to flag potential revenue leaks.
+- **School Holiday Context:** Overlays seasonal holiday data to explain traffic spikes.
+- **Data Quality Assurance:** Cross-references guest counts with revenue to ensure data integrity.
 
-### System architecture
+---
 
-`Frontend -> /api/revenue -> Prisma -> SQLite -> business-rule enrichment -> JSON response`
+## 🏗️ Tech Stack
 
-### Core capabilities
+### Backend (`/backend`)
+- **Engine:** Node.js + Express
+- **Database Layer:** Prisma ORM + SQLite (Portable and fast)
+- **Security:** Token-based Authentication & Protected API Routes
+- **Optimization:** 60-second In-memory Caching for snappy performance.
 
-#### 1) API endpoints
+### Frontend (`/frontend`)
+- **Framework:** React + Vite
+- **Design:** Modern **Crystal Clear Theme** using Vanilla CSS & Glassmorphism.
+- **Logic:** Custom React Hooks for centralized API interaction and Auth state.
 
-- `GET /health`: backend health check
-- `GET /api/revenue`: returns daily rows, summary, and insights
+---
 
-Optional query params:
+## 📂 Project Anatomy
 
-- `startDate=YYYY-MM-DD`
-- `endDate=YYYY-MM-DD`
+- `backend/src/server.js`: API entry point and Auth middleware.
+- `backend/prisma/schema.prisma`: Data models and DB structure.
+- `backend/src/lib/revenue-rules.js`: Core business logic and enrichment rules.
+- `frontend/src/App.jsx`: Main UI orchestrator and view switching logic.
+- `frontend/src/hooks.js`: Specialized hooks for API fetching and session security.
 
-#### 2) Dashboard UI
+---
 
-- KPI cards: total revenue, guests, discount, avg spend/guest
-- Insight cards: discount risk, holiday impact, guest quality checks
-- Date filter with apply/reset
-- Daily operations table with risk/action context
+## 🔐 Credentials (Local Dev)
 
-#### 3) Business rules
+To access the dashboard in development mode:
+- **Username:** `admin`
+- **Password:** `password123`
 
-- **Dynamic discount mapping**
-  - `HIGH` (`>= 12%`): review campaign / coupon abuse risk
-  - `MEDIUM` (`>= 7%`): monitor daily
-  - `LOW` (`> 0%`): healthy level
-  - `NONE` (`= 0%`): no discount
-- **School holiday overlay**
-  - Adds `isSchoolHoliday` for seasonal analysis
-- **Guest headcount quality rule**
-  - Computes `estimatedGuests = revenue / expectedSpendPerGuest`
-  - Compares with actual guests to output `guestDelta` and `guestDataQuality`
+---
 
-### Response model
+## 💾 Database Operations
 
-The `/api/revenue` response includes:
+Managed via **Prisma**:
+- **Modify Schema:** Update `backend/prisma/schema.prisma`.
+- **Apply Changes:** Run `npx prisma migrate dev`.
+- **Seed Data:** Run `node backend/prisma/seed.js`.
 
-- `rows`: enriched daily records
-- `summary`: aggregated KPIs
-- `insights`: management-level indicators
-- `meta`: rule configuration and cache metadata
-- `filters`: requested date range
-- `source`: `fresh` or `cache`
+---
 
-### Reliability and quality practices
+## 🚀 Roadmap
 
-- Input validation for date format and range boundaries
-- Standardized error responses
-- Query-keyed cache (`all_all`, `2026-05-01_2026-05-05`, etc.)
-- Defensive calculations for zero/empty edge cases
+1. **Production POS Integration:** Connecting live Pisell/Funtovia API endpoints.
+2. **Multi-Park Support:** Dedicated views for Robinson Chalong and Central Floresta locations.
+3. **Smart Alerts:** Automated notifications (Line/Email) for revenue anomalies.
+4. **Historical Sync:** Batch ingestion of past fiscal year data.
 
-### Local setup
+---
 
-#### Backend
+## 🛠️ Quick Start
 
+### 1. Installation
+```bash
+# Backend setup
+cd backend && npm install
+
+# Frontend setup
+cd frontend && npm install
+```
+
+### 2. Database Initialization
 ```bash
 cd backend
-npm install
-npx prisma generate
-npx prisma db push
-npx prisma db seed
-npm run dev
+npx prisma migrate dev --name init
+node prisma/seed.js
 ```
 
-#### Frontend
-
+### 3. Launch (Two Terminals Required)
 ```bash
-cd frontend
-npm install
-npm run dev
+# Terminal 1: Backend
+cd backend && npm run dev
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
 ```
 
-Frontend default URL: `http://localhost:5173`  
-Backend default URL: `http://localhost:4000`
-
-### Interview positioning (TH)
-
-ระบบนี้เป็น Revenue Analytics MVP สำหรับ OTO Kid Park โดยใช้ React + Node.js + Prisma/SQLite  
-ผมใส่ business rules ที่ใช้ได้จริง 3 ส่วน: dynamic discount mapping, school-holiday overlay, และ guest headcount quality check  
-ผลลัพธ์คือทีม operation ได้ทั้ง “ตัวเลข” และ “action” พร้อมใช้งาน  
-ระบบรองรับ date filtering, caching, และ validation เพื่อ performance + reliability  
-โครงสร้าง backend ถูกออกแบบให้เปลี่ยนจาก local/mock data ไป POS ingestion จริงได้โดยกระทบ UI น้อยที่สุด
-
-### Interview positioning (EN)
-
-This is a Revenue Analytics MVP for OTO Kid Park built with React, Node.js, and Prisma/SQLite.  
-I implemented three practical business-rule layers: dynamic discount mapping, school-holiday overlay, and guest headcount quality checks, so operations teams get both metrics and actions.  
-The API supports date filtering, caching, and validation for performance and reliability.  
-The backend is structured to be integration-ready for real Pisell/Funtovia POS ingestion with minimal frontend impact.
-
-### Current gaps and next steps
-
-- Current data source is local/mock-first (POS ingestion pending)
-- Auth/role model not implemented yet
-- Test coverage is still minimal
-
-Planned improvements:
-
-1. Add POS ingestion adapter (Pisell/Funtovia)
-2. Add scheduled sync jobs
-3. Add anomaly detection for revenue drops/spikes
-4. Expand API + rule unit/integration tests
-5. Add charts and drill-down by outlet/category
-
-### Integration-ready source modes
-
-Backend now supports swappable revenue source adapters:
-
-- `REVENUE_SOURCE=database` (default): reads from Prisma/SQLite
-- `REVENUE_SOURCE=mock-pos`: uses a mock POS adapter to simulate integration behavior
-
-This keeps business rules and API response contracts stable while changing only the ingestion/source layer.
-
-### Tests
-
-Backend includes lightweight automated tests using Node's built-in test runner:
-
-```bash
-cd backend
-npm test
-```
-
-Coverage focus:
-
-- Date input validation for `/api/revenue`
-- Enriched payload contract (`rows`, `summary`, `insights`, `meta`)
-- Rule-layer behavior (discount band mapping, summary/insight calculations)
-# OTO
-# OTO
-# OTO
-# OTO
-# OTO
-# OTO
+URL: [http://localhost:5173](http://localhost:5173)

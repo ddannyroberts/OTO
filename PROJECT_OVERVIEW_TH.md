@@ -1,66 +1,104 @@
 # OTO Revenue Analytics Mini 📊
 
-โปรเจกต์นี้คือ **MVP (Minimum Viable Product)** สำหรับระบบวิเคราะห์รายได้ (Revenue Intelligence) ที่ออกแบบมาเพื่อธุรกิจในกลุ่ม Ticketing, F&B (อาหารและเครื่องดื่ม), Merchandise (ของที่ระลึก) และงาน Event ต่างๆ
-
-## 🎯 เป้าหมายของโปรเจกต์ (Project Goals)
-1. **Intelligence Dashboard:** ให้เจ้าของธุรกิจเห็นภาพรวมรายได้และจำนวนลูกค้าในแต่ละวันได้ทันที
-2. **Data-Driven Insights:** คำนวณความคุ้มค่า (Revenue per Guest) และแจ้งเตือนเมื่อข้อมูลผิดปกติ (เช่น จำนวนลูกค้าเพิ่มแต่รายได้ลด)
-3. **Quick Data Entry:** มีระบบคีย์ข้อมูลที่ง่ายและรวดเร็ว เพื่อลดภาระงานหน้าบ้าน
-4. **Flexible Themes:** รองรับการปรับเปลี่ยนหน้าตา (UI) ตามความชอบของผู้ใช้
+โปรเจกต์นี้คือ **MVP (Minimum Viable Product)** ระบบวิเคราะห์รายได้อัจฉริยะที่พัฒนาขึ้นสำหรับ **OTO Kid Park (Phuket)** เพื่อเชื่อมต่อและวิเคราะห์ข้อมูลจากระบบ POS (Pisell/Funtovia) โดยเน้นความเร็วในการพัฒนาด้วยเทคนิค **AI-Driven Development (Vibe Coding)**
 
 ---
 
-## 🏗️ โครงสร้างระบบ (Architecture)
-### 1. Backend (โฟลเดอร์ `/backend`)
-ทำหน้าที่เป็นหัวใจในการจัดการข้อมูล
-- **Tech Stack:** Node.js, Express.js
-- **Database:** SQLite (ผ่าน Prisma ORM) ซึ่งง่ายต่อการติดตั้งและไม่ต้องใช้ Server แยก
-- **Authentication:** ระบบ Login พื้นฐานโดยใช้ Token-based เพื่อป้องกันข้อมูล
-- **หน้าที่หลัก:**
-    - ให้บริการ API สำหรับดึงข้อมูลรายได้ (`GET /api/revenue` - *ต้องการ Login*)
-    - จัดการการเข้าสู่ระบบ (`POST /api/login`) และตรวจสอบสถานะผู้ใช้ (`GET /api/me`)
-    - รับข้อมูลรายได้ใหม่เข้าสู่ฐานข้อมูล (`POST /api/revenue` - *ต้องการ Login*)
-    - มีระบบ **Cache** ภายใน (60 วินาที) เพื่อลดภาระการดึงข้อมูลซ้ำๆ
+## 🎯 ฟีเจอร์หลัก (Core Features)
 
-### 2. Frontend (โฟลเดอร์ `/frontend`)
-ทำหน้าที่แสดงผลและโต้ตอบกับผู้ใช้
-- **Tech Stack:** React, Vite, Vanilla CSS
-- **หน้าที่หลัก:**
-    - **Login Page:** หน้าจอเข้าสู่ระบบเพื่อความปลอดภัย
-    - **Revenue Chart:** แสดงกราฟเส้นเปรียบเทียบรายได้และส่วนลด
----
+### 1. Intelligence Dashboard
+- **Visual Analytics:** แสดงกราฟเส้นเปรียบเทียบรายได้และส่วนลดรายวัน
+- **KPI Summary:** สรุปยอดรวมรายได้, จำนวนลูกค้า, ส่วนลด และค่าเฉลี่ยการใช้จ่ายต่อหัว (Revenue per Guest)
+- **Actionable Insights:** ระบบวิเคราะห์ข้อมูลอัตโนมัติ เช่น การแจ้งเตือนเมื่อส่วนลดสูงเกินไป หรือเมื่อจำนวนลูกค้าไม่สัมพันธ์กับรายได้
 
-## 🔐 ระบบความปลอดภัย (Security)
-แอปพลิเคชันมีระบบ Login เพื่อจำกัดการเข้าถึงข้อมูล:
-- **Default User:** `admin` / **Password:** `password123`
-- **Session:** ใช้ Token บันทึกลงใน LocalStorage เพื่อใช้ยืนยันตัวตนกับ API ทุกครั้ง
+### 2. Operational Tools
+- **Quick Data Entry:** แบบฟอร์มบันทึกข้อมูลรายได้ประจำวันที่ใช้งานง่าย (บันทึกลง SQLite)
+- **Data Export:** สามารถส่งออกข้อมูล (Export) เป็นไฟล์ CSV เพื่อนำไปใช้ในรายงานการประชุมได้ทันที
+- **Flexible Filters:** เลือกดูข้อมูลตามช่วงวันที่ต้องการได้
 
-## 💾 การจัดการข้อมูล (Data Management)
-- **การเพิ่มข้อมูล:** สามารถทำได้ผ่านฟอร์ม "Quick Data Entry" ในหน้าเว็บ (บันทึกลง SQLite)
-- **แหล่งข้อมูลในอนาคต:** ระบบถูกออกแบบมาให้รองรับการเชื่อมต่อกับ **Pisell/Funtovia POS API** โดยสามารถแก้ไขที่ไฟล์ `backend/src/services/revenue-source.js`
-- **การแก้ไขฐานข้อมูล:** หากต้องการเพิ่มตารางข้อมูลใหม่ ให้แก้ไขที่ `backend/prisma/schema.prisma` แล้วรัน `npx prisma migrate dev`
+### 3. Advanced Business Logic
+- **Dynamic Discount Mapping:** จัดกลุ่มระดับความเสี่ยงของส่วนลด (Low, Medium, High) เพื่อตรวจสอบความผิดปกติ
+- **School Holiday Overlay:** ระบบตรวจสอบและแสดงผลข้อมูลโดยอ้างอิงกับช่วงวันหยุดโรงเรียน
+- **Data Quality Check:** คำนวณความสมเหตุสมผลของจำนวนลูกค้าเทียบกับรายได้ที่ได้รับ
 
 ---
 
-## 🛠️ วิธีการใช้งานสำหรับนักพัฒนา
+## 🏗️ โครงสร้างทางเทคนิค (Tech Stack)
 
-    - **KPI Cards:** สรุปยอดรวมรายได้, จำนวนลูกค้า, และค่าเฉลี่ยต่อหัว
-    - **Insight Cards:** วิเคราะห์แนวโน้ม (Trend) และแจ้งเตือนจุดที่ควรระวัง
-    - **Data Entry Form:** ส่วนสำหรับกรอกข้อมูลรายได้รายวัน
-    - **Theme Switcher:** ระบบเปลี่ยนสีหน้าจอ (Candy, Ocean, Sunset, Crystal)
+### Backend (`/backend`)
+- **Runtime:** Node.js (Express)
+- **Database:** SQLite (จัดการผ่าน Prisma ORM)
+- **Security:** ระบบ Authentication (Username/Password) พร้อม Token-based security
+- **Performance:** ระบบ In-memory Caching (60 วินาที) เพื่อลดภาระของ Database และทำให้แอปตอบสนองไว
+
+### Frontend (`/frontend`)
+- **Framework:** React (Vite)
+- **Styling:** Vanilla CSS พร้อมดีไซน์แบบ **Crystal Clear Theme** (Glassmorphism)
+- **State Management:** Custom Hooks สำหรับจัดการข้อมูลและการยืนยันตัวตน
 
 ---
 
-## 🛠️ วิธีการใช้งานสำหรับนักพัฒนา
-1. **การติดตั้ง:** รัน `npm install` ในทั้ง 2 โฟลเดอร์
-2. **การรัน Backend:** เข้าไปที่ `/backend` แล้วรัน `npm run dev` (พอร์ต 4000)
-3. **การรัน Frontend:** เข้าไปที่ `/frontend` แล้วรัน `npm run dev` (พอร์ต 5173)
+## 📂 โครงสร้างโฟลเดอร์ (Folder Structure)
+
+- `backend/src/server.js`: ศูนย์กลางการจัดการ API และ Authentication
+- `backend/prisma/schema.prisma`: โครงสร้างฐานข้อมูล (Database Schema)
+- `backend/src/lib/revenue-rules.js`: หัวใจของ Business Logic และสูตรคำนวณต่างๆ
+- `frontend/src/App.jsx`: ส่วนควบคุมหน้าจอหลักและระบบ Routing เบื้องต้น
+- `frontend/src/hooks.js`: ส่วนเชื่อมต่อ API (Fetch) และจัดการ Login Session
 
 ---
 
-## 📂 สรุปไฟล์สำคัญ
-- `backend/src/server.js`: ตัวจัดการ API หลัก
-- `backend/prisma/schema.prisma`: โครงสร้างฐานข้อมูล
-- `frontend/src/App.jsx`: จุดรวม Component ทั้งหมดของหน้าเว็บ
-- `frontend/src/hooks.js`: ส่วนติดต่อกับ API (Logic การดึงข้อมูล)
-- `frontend/src/lib/revenue-rules.js`: สูตรคำนวณทางธุรกิจ (Business Logic)
+## 🔐 ข้อมูลการเข้าใช้งาน (Credentials)
+
+สำหรับการทดสอบระบบในเครื่อง (Local Development):
+- **Username:** `admin`
+- **Password:** `password123`
+
+---
+
+## 💾 การจัดการฐานข้อมูล (Database)
+
+โปรเจกต์นี้ใช้ **Prisma** ในการจัดการฐานข้อมูล:
+- **แก้ไขตาราง:** แก้ไขที่ `backend/prisma/schema.prisma`
+- **อัปเดตฐานข้อมูล:** รันคำสั่ง `npx prisma migrate dev`
+- **สร้างข้อมูลเริ่มต้น:** รัน `node backend/prisma/seed.js`
+
+---
+
+## 🚀 แผนพัฒนาในอนาคต (Roadmap)
+
+1. **POS Integration:** เชื่อมต่อ API จริงกับระบบ Pisell/Funtovia
+2. **Multi-location Support:** แยกดูข้อมูลรายได้ตามสาขา (Chalong / Central Floresta)
+3. **Anomaly Detection:** ระบบแจ้งเตือนผ่าน Line/Email เมื่อพบยอดเงินที่ผิดปกติมาก
+4. **Automated Sync:** ระบบดึงข้อมูลจาก POS อัตโนมัติทุกสิ้นวัน
+
+---
+
+## 🛠️ วิธีติดตั้งและรันโปรเจกต์
+
+### 1. ติดตั้ง Dependencies
+```bash
+# ในโฟลเดอร์ backend
+cd backend && npm install
+
+# ในโฟลเดอร์ frontend
+cd frontend && npm install
+```
+
+### 2. เตรียมฐานข้อมูล (ทำครั้งแรก)
+```bash
+cd backend
+npx prisma migrate dev --name init
+node prisma/seed.js
+```
+
+### 3. เริ่มทำงาน (เปิด 2 Terminal)
+```bash
+# Terminal 1: Backend
+cd backend && npm run dev
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
+```
+
+เข้าใช้งานผ่าน: [http://localhost:5173](http://localhost:5173)
