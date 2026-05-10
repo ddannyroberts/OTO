@@ -148,3 +148,4 @@ Coverage focus:
 - Date input validation for `/api/revenue`
 - Enriched payload contract (`rows`, `summary`, `insights`, `meta`)
 - Rule-layer behavior (discount band mapping, summary/insight calculations)
+# OTO
