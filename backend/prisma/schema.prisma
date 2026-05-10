@@ -14,3 +14,9 @@ model RevenueDaily {
   revenue  Int
   discount Int
 }
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+}

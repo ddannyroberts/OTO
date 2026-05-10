@@ -26,6 +26,40 @@ export function createApp({ revenueSource = defaultRevenueSource } = {}) {
   app.use(cors());
   app.use(express.json());
 
+  // Simple Auth Middleware (Mock for now, can be improved with JWT)
+  const authMiddleware = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader === "Bearer secret-session-token") {
+      return next();
+    }
+    res.status(401).json({ error: "Unauthorized" });
+  };
+
+  app.post("/api/login", async (req, res) => {
+    const { username, password } = req.body;
+    const user = await prisma.user.findUnique({
+      where: { username }
+    });
+
+    if (user && user.password === password) {
+      return res.json({ 
+        ok: true, 
+        token: "secret-session-token", // In real apps, generate a real JWT
+        user: { username: user.username }
+      });
+    }
+
+    res.status(401).json({ error: "Invalid username or password" });
+  });
+
+  app.get("/api/me", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader === "Bearer secret-session-token") {
+      return res.json({ username: "admin" });
+    }
+    res.status(401).json({ error: "Not logged in" });
+  });
+
   app.get("/health", (_req, res) => {
     res.json({
       ok: true,
@@ -33,7 +67,7 @@ export function createApp({ revenueSource = defaultRevenueSource } = {}) {
     });
   });
 
-  app.get("/api/revenue", async (req, res, next) => {
+  app.get("/api/revenue", authMiddleware, async (req, res, next) => {
     try {
       const { startDate, endDate } = req.query;
 
@@ -83,7 +117,7 @@ export function createApp({ revenueSource = defaultRevenueSource } = {}) {
     }
   });
 
-  app.post("/api/revenue", async (req, res, next) => {
+  app.post("/api/revenue", authMiddleware, async (req, res, next) => {
     try {
       if (revenueSource.mode !== "database") {
         return res.status(400).json({ error: "Data entry is only available in database mode" });

@@ -37,10 +37,16 @@
 
 .title-section h1 {
   margin: 0;
+  margin-bottom: 0.75rem;
   font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.025em;
+}
+
+.title-section p.sub {
+  margin: 0;
+  line-height: 1.5;
 }
 
 .header-meta {
@@ -57,6 +63,17 @@
 }
 
 .export-btn {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+}
+
+.user-info {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.logout-btn {
   font-size: 0.75rem;
   padding: 0.4rem 0.8rem;
 }
@@ -388,50 +405,7 @@ tr:hover td {
   100% { transform: rotate(360deg); }
 }
 
-/* Themes */
-.theme-switcher {
-  display: flex;
-  gap: 0.4rem;
-  background: var(--panel-muted-bg);
-  padding: 0.25rem;
-  border-radius: 12px;
-  border: 1px solid var(--panel-border);
-}
-
-.theme-chip {
-  background: transparent;
-  color: var(--text-sub);
-  border: none;
-  font-size: 0.75rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-.theme-chip.active {
-  background: #fff;
-  color: var(--button-main);
-  box-shadow: var(--shadow-sm);
-}
-
-.theme-candy {
-  --button-main: #7c3aed;
-  --bg-main: linear-gradient(135deg, #fef2f2 0%, #f5f3ff 100%);
-}
-
-.theme-ocean {
-  --button-main: #0284c7;
-  --bg-main: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  --accent-revenue: #0ea5e9;
-}
-
-.theme-sunset {
-  --button-main: #ea580c;
-  --bg-main: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-  --accent-revenue: #f97316;
-  --accent-discount: #dc2626;
-}
-
+/* Crystal Clear Theme (Default) */
 .theme-crystal {
   --bg-main: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2000') center/cover fixed;
   --panel-bg: rgba(255, 255, 255, 0.7);
@@ -447,4 +421,74 @@ tr:hover td {
 .theme-crystal .table-wrap {
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Login Page Styles */
+.login-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-main);
+  font-family: 'Inter', sans-serif;
+}
+
+.login-card {
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  padding: 3rem;
+  border-radius: 24px;
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-card h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.login-card p {
+  color: var(--text-sub);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 1rem;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 1rem;
 }

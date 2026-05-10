@@ -18,7 +18,9 @@ export function useRevenueData(startDate, endDate) {
       if (endDate) params.set("endDate", endDate);
 
       const url = `${API_BASE}/api/revenue${params.toString() ? `?${params}` : ""}`;
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
       const json = await res.json();
 
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
@@ -47,7 +49,10 @@ export function useSaveRevenue() {
     try {
       const res = await fetch(`${API_BASE}/api/revenue`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
         body: JSON.stringify(entry)
       });
 
@@ -65,4 +70,68 @@ export function useSaveRevenue() {
   const resetSaveState = () => setSaveState({ loading: false, error: "", success: "" });
 
   return { saveEntry, saveState, resetSaveState };
+}
+
+export function useAuth() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const checkAuth = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      } else {
+        localStorage.removeItem("token");
+      }
+    } catch (err) {
+      console.error("Auth check failed", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const login = async (username, password) => {
+    setError("");
+    try {
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        setUser(data.user);
+        return true;
+      } else {
+        setError(data.error || "Login failed");
+        return false;
+      }
+    } catch (err) {
+      setError("Network error");
+      return false;
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  return { user, loading, error, login, logout };
 }

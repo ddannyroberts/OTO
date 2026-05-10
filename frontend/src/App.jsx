@@ -4,23 +4,13 @@ import { RevenueDiscountChart } from "./components/RevenueChart";
 import { KpiGrid, InsightGrid } from "./components/Grids";
 import { RevenueTable } from "./components/RevenueTable";
 import { Filters, EntryForm } from "./components/Forms";
-import { useRevenueData, useSaveRevenue } from "./hooks";
+import { Login } from "./components/Login";
+import { useRevenueData, useSaveRevenue, useAuth } from "./hooks";
 import { exportToCSV } from "./utils";
 
-const THEME_STORAGE_KEY = "oto-theme";
-const THEMES = [
-  { id: "candy", label: "Candy Land" },
-  { id: "ocean", label: "Ocean Play" },
-  { id: "sunset", label: "Sunset Park" },
-  { id: "crystal", label: "Crystal Clear" }
-];
-
 export default function App() {
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    return THEMES.some((item) => item.id === savedTheme) ? savedTheme : "candy";
-  });
-
+  const { user, loading: authLoading, error: authError, login, logout } = useAuth();
+  
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [appliedFilters, setAppliedFilters] = useState({ start: "", end: "" });
@@ -33,6 +23,18 @@ export default function App() {
   const { data, source, loading, error, refetch } = useRevenueData(appliedFilters.start, appliedFilters.end);
   const { saveEntry, saveState } = useSaveRevenue();
 
+  if (authLoading) {
+    return (
+      <div className="loader-container full-page">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login onLogin={login} error={authError} />;
+  }
+
   function handleApplyFilter(e) {
     e.preventDefault();
     setAppliedFilters({ start: startDate, end: endDate });
@@ -42,11 +44,6 @@ export default function App() {
     setStartDate("");
     setEndDate("");
     setAppliedFilters({ start: "", end: "" });
-  }
-
-  function handleChangeTheme(themeId) {
-    setTheme(themeId);
-    localStorage.setItem(THEME_STORAGE_KEY, themeId);
   }
 
   async function handleSaveEntry(e) {
@@ -71,7 +68,7 @@ export default function App() {
   const hasRows = rows.length > 0;
 
   return (
-    <div className={`page theme-${theme}`}>
+    <div className="page theme-crystal">
       <header className="header">
         <div className="title-section">
           <h1>OTO Revenue Analytics Mini</h1>
@@ -80,6 +77,8 @@ export default function App() {
         
         <div className="header-meta">
           <div className="header-actions">
+            <span className="user-info">Hi, {user.username}</span>
+            <button className="ghost logout-btn" onClick={logout}>Logout</button>
             {hasRows && (
               <button className="ghost export-btn" onClick={() => exportToCSV(rows, data.summary)}>
                 Export CSV
@@ -91,18 +90,6 @@ export default function App() {
                 {source === "cache" ? "CACHE" : source === "fresh" ? "FRESH" : "-"}
               </span>
             </div>
-          </div>
-          <div className="theme-switcher">
-            {THEMES.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`theme-chip ${theme === item.id ? "active" : ""}`}
-                onClick={() => handleChangeTheme(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
           </div>
         </div>
       </header>
