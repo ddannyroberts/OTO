@@ -1,3 +1,22 @@
+# Dependencies
 node_modules/
-.DS_Store
+
+# Build and logs
+dist/
+dist-ssr/
+*.log
+
+# Environment variables
 .env
+.env.*
+!.env.example
+
+# Database
+*.db
+*.db-journal
+/backend/src/generated/prisma
+
+# OS and Editors
+.DS_Store
+.vscode/
+.idea/
